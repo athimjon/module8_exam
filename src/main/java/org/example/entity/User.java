@@ -1,6 +1,5 @@
 package org.example.entity;
 
-import com.sun.jdi.event.StepEvent;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
