@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Update Task</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #6366f1;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #94a3b8;
+      --border: #e2e8f0;
+      --comment-bg: #f8fafc;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f1f5f9;
+      color: var(--dark);
+      line-height: 1.6;
+    }
+
+    .task-container {
+      max-width: 800px;
+      margin: 2rem auto;
+    }
+
+    .task-card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      border: none;
+      overflow: hidden;
+    }
+
+    .task-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background-color: #ea922e;
+    }
+
+    .task-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .task-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      background-color: #e0e7ff;
+      color: var(--primary);
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .task-body {
+      padding: 1.5rem;
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.625rem 1rem;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+    }
+
+    .attachment-preview {
+      width: 100%;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--border);
+      max-height: 300px;
+      object-fit: contain;
+    }
+
+    .comments-section {
+      margin-top: 2rem;
+    }
+
+    .comments-title {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .comments-title:after {
+      content: "";
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 40px;
+      height: 3px;
+      background-color: var(--primary);
+      border-radius: 3px;
+    }
+
+    .comment-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .comment-card {
+      background-color: white;
+      border-radius: 8px;
+      padding: 1.25rem;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+      transition: all 0.2s ease;
+    }
+
+    .comment-card:hover {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      transform: translateY(-1px);
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .comment-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 0.75rem;
+      border: 2px solid var(--border);
+    }
+
+    .comment-meta {
+      flex-grow: 1;
+    }
+
+    .comment-author {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.1rem;
+      font-size: 0.875rem;
+    }
+
+    .comment-time {
+      color: var(--gray);
+      font-size: 0.75rem;
+    }
+
+    .comment-content {
+      color: var(--dark);
+      font-size: 0.875rem;
+      line-height: 1.5;
+      padding-left: 44px;
+    }
+
+    .no-comments {
+      color: var(--gray);
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.875rem;
+      border: 1px dashed var(--border);
+      border-radius: 8px;
+      background-color: var(--light);
+    }
+
+    .add-comment {
+      margin-top: 2.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      border: none;
+      border-radius: 8px;
+      padding: 0.625rem 1.25rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary:hover {
+      background-color: #4338ca;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.625rem 1.25rem;
+      font-weight: 500;
+      color: var(--dark);
+      transition: all 0.2s ease;
+    }
+
+    .btn-outline:hover {
+      background-color: var(--light);
+    }
+
+    .task-footer {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      background-color: #f8fafc;
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .comment-list .comment-card:nth-child(odd) {
+      background-color: var(--comment-bg);
+    }
+
+    .comment-list .comment-card:first-child {
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+    }
+
+    .comment-list .comment-card:last-child {
+      border-bottom-left-radius: 12px;
+      border-bottom-right-radius: 12px;
+      margin-bottom: 0;
+    }
+  </style>
+</head>
+<body>
+<div class="container task-container">
+  <div class="task-card">
+    <!-- Header -->
+    <div class="task-header text-center text-white">
+      <h1 class="task-title">Update Task</h1>
+      <span class="task-status" th:text="${task.status.name}">Status</span>
+    </div>
+
+    <!-- Body -->
+    <div class="task-body">
+      <!-- Image preview -->
+      <div th:if="${task.attachment != null}" class="text-center">
+        <img th:src="|/attachment/view/${task.attachment.id}|" class="attachment-preview" alt="Task attachment">
+      </div>
+
+      <!-- Task update form -->
+      <form action="/task/update" method="post" enctype="multipart/form-data">
+        <div class="mb-4">
+          <label for="file" class="form-label">Upload New Image(optional)</label>
+          <input type="file" class="form-control" id="file" name="file">
+        </div>
+        <div class="mb-4">
+          <label for="title" class="form-label">Task Title</label>
+          <input type="text" class="form-control" id="title" th:value="${task.title}" name="title" required>
+        </div>
+
+        <!-- Footer inside the form -->
+        <div class="task-footer">
+          <a href="#" class="btn btn-outline">Cancel</a>
+          <button type="submit" class="btn btn-primary">Save Changes</button>
+        </div>
+      </form>
+
+      <!-- Comments section -->
+      <div class="comments-section">
+        <h3 class="comments-title">Comments</h3>
+
+        <div th:if="${task.comments != null and !task.comments.isEmpty()}">
+          <div class="comment-list">
+            <div class="comment-card" th:each="comment : ${task.comments}">
+              <div class="comment-header">
+                <img th:src="|/attachment/view/${comment.user.attachment.id}|" class="comment-avatar" alt="User avatar">
+                <div class="comment-meta">
+                  <div class="comment-author" th:text="${comment.user.username}">Username</div>
+                  <div class="comment-time" th:text="${#temporals.format(comment.createdAt, 'MMM d, yyyy h:mm a')}">Jan 1, 2023 12:00 PM</div>
+                </div>
+              </div>
+              <div class="comment-content" th:text="${comment.comment}">
+                Comment text goes here...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div th:if="${task.comments == null or task.comments.isEmpty()}" class="no-comments">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" ... class="feather feather-message-circle mb-2">
+            <path d="M21 11.5a8.38 8.38 0 ..."></path>
+          </svg>
+          <p>No comments yet. Be the first to comment!</p>
+        </div>
+
+        <!-- Add comment form -->
+        <div class="add-comment">
+          <form th:action="@{/task/add/comment}" method="post">
+            <input type="hidden" name="taskId" th:value="${task.id}">
+            <div class="mb-3">
+              <label for="newComment" class="form-label">Add Comment</label>
+              <textarea class="form-control" id="newComment" name="comment" rows="3" placeholder="Write your comment here..." required></textarea>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">Post Comment</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

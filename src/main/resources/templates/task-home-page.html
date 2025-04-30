@@ -264,9 +264,13 @@
                         </div>
 
                         <div class="task-actions">
-                            <button class="btn btn-edit">
-                                <i class="fas fa-pencil-alt"></i> Edit
-                            </button>
+                            <form action="/task/update">
+                                <input type="hidden" name="taskId" th:value="${task.id}">
+                                <button class="btn btn-edit">
+                                    <i class="fas fa-pencil-alt"></i> Edit
+                                </button>
+                            </form>
+
                             <div>
                                 <form method="post" action="/task/update/left">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>

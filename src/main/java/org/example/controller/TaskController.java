@@ -10,10 +10,8 @@ import org.example.repo.StatusRepository;
 import org.example.repo.TaskRepository;
 import org.example.repo.UserRepository;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -74,4 +72,11 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/";
     }
+
+    @GetMapping("/update")
+     public String updateTaskPage(@RequestParam Integer taskId, Model model) {
+        model.addAttribute("task", taskRepository.findById(taskId).get());
+        return "task-update";
+    }
+
 }
