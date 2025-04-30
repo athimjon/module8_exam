@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 @RequestMapping("/task")
@@ -51,6 +52,25 @@ public class TaskController {
         task.setUser(user);
         task.setAttachment(attachment);
 
+        taskRepository.save(task);
+        return "redirect:/";
+    }
+
+    @PostMapping("/update/right")
+    public String changeTaskStatusToRight(@RequestParam   Integer taskId){
+        Task task = taskRepository.findById(taskId).get();
+        Integer posNumber = task.getStatus().getPositionNumber();
+        List<Status> statuses = statusRepository.getStatusRight(posNumber);
+        task.setStatus(statuses.get(0));
+        taskRepository.save(task);
+        return "redirect:/";
+    }
+    @PostMapping("/update/left")
+    public String changeTaskStatusToLeft(@RequestParam   Integer taskId){
+        Task task = taskRepository.findById(taskId).get();
+        Integer posNumber = task.getStatus().getPositionNumber();
+        List<Status> statuses = statusRepository.getStatusLeft(posNumber);
+        task.setStatus(statuses.get(0));
         taskRepository.save(task);
         return "redirect:/";
     }

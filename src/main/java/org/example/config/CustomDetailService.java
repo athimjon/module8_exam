@@ -25,7 +25,6 @@ public class CustomDetailService implements UserDetailsService {
         }
 
         User user = userOptional.get();
-        System.out.println("Loaded user: " + user);
         return user;
     }
 }

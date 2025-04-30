@@ -268,12 +268,20 @@
                                 <i class="fas fa-pencil-alt"></i> Edit
                             </button>
                             <div>
-                                <button class="btn btn-left me-2">
+                                <form method="post" action="/task/update/left">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <input th:name="taskId" th:value="${task.id}" type="hidden">
+                                <button th:if="${task.status.getPositionNumber()!=1}" class="btn btn-left me-2">
                                     <i class="fas fa-arrow-left"></i>
                                 </button>
-                                <button class="btn btn-right">
+                                </form>
+                                <form method="post" action="/task/update/right">
+                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                    <input th:name="taskId" th:value="${task.id}" type="hidden">
+                                <button th:if="${task.status.getPositionNumber()!=statuses.size()}" class="btn btn-right">
                                     <i class="fas fa-arrow-right"></i>
                                 </button>
+                                </form>
                             </div>
                         </div>
                     </div>
