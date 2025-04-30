@@ -27,8 +27,10 @@ public class PageController {
     @GetMapping("/")
     public String getTaskHomePage(Model model) {
         List<Task> tasks = taskRepository.findAll();
-        List<Status> statuses = statusRepository.findAll();
+        List<Status> statuses = statusRepository.findByIsActiveTrue();
+        long limit = statusRepository.count();
         model.addAttribute("tasks", tasks);
+        model.addAttribute("limit", limit);
         model.addAttribute("statuses", statuses);
         return "task-home-page";
     }

@@ -14,4 +14,6 @@ public interface StatusRepository extends JpaRepository<Status, Integer> {
  @Query(value = "select s.* from status s where s.position_number< :posNumber and s.is_active=true order by position_number desc", nativeQuery = true)
  List<Status> getStatusLeft( Integer posNumber);
 
+    List<Status> findByIsActiveTrue();
+
 }

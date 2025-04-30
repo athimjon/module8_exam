@@ -278,7 +278,7 @@
                                 <form method="post" action="/task/update/right">
                                     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
                                     <input th:name="taskId" th:value="${task.id}" type="hidden">
-                                <button th:if="${task.status.getPositionNumber()!=statuses.size()}" class="btn btn-right">
+                                <button th:if="${task.status.getPositionNumber()!=limit}" class="btn btn-right">
                                     <i class="fas fa-arrow-right"></i>
                                 </button>
                                 </form>
