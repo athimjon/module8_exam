@@ -12,7 +12,6 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
 
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
 
@@ -20,7 +19,7 @@ public class SecurityConfig {
             registry
                     .requestMatchers("/images/**").permitAll();
             registry
-                    .requestMatchers( "/login", "/register","/register/send/email","/register/verify").permitAll();
+                    .requestMatchers("/login", "/register", "/register/send/email", "/register/verify").permitAll();
             registry
                     .anyRequest().authenticated();
         });
@@ -31,7 +30,7 @@ public class SecurityConfig {
                         .loginProcessingUrl("/login")
                         .successForwardUrl("/")
                         .defaultSuccessUrl("/")
-                        .failureForwardUrl("/login?error=true")
+                        .failureUrl("/login?error=true")
                         .permitAll()
         );
         return httpSecurity.build();
