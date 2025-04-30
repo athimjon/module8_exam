@@ -24,8 +24,8 @@ public class Runner implements CommandLineRunner {
 //
 //        String fileName = path.getFileName().toString();
 //
-//// Build the Attachment object using the file name and content
-//        Attachment attachment = Attachment.builder()
+//// Build the AttachmentController object using the file name and content
+//        AttachmentController attachment = AttachmentController.builder()
 //                .name(fileName)  // Use the file name, not the content
 //                .content(fileContent)  // Use the byte content of the image
 //                .build();

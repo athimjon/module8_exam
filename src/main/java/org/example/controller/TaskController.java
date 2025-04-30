@@ -1,9 +1,57 @@
 package org.example.controller;
 
+import lombok.SneakyThrows;
+import org.example.entity.Attachment;
+import org.example.entity.Status;
+import org.example.entity.Task;
+import org.example.entity.User;
+import org.example.repo.AttachmentRepository;
+import org.example.repo.StatusRepository;
+import org.example.repo.TaskRepository;
+import org.example.repo.UserRepository;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.Optional;
+
+@RequestMapping("/task")
 @Controller
 public class TaskController {
+    private final TaskRepository taskRepository;
+    private final AttachmentRepository attachmentRepository;
+    private final StatusRepository statusRepository;
+    private final UserRepository userRepository;
 
+    public TaskController(TaskRepository taskRepository, AttachmentRepository attachmentRepository, StatusRepository statusRepository, UserRepository userRepository) {
+        this.taskRepository = taskRepository;
+        this.attachmentRepository = attachmentRepository;
+        this.statusRepository = statusRepository;
+        this.userRepository = userRepository;
+    }
+
+    @PostMapping("/create")
+    public String createStatus(@ModelAttribute Task task,
+                               @RequestParam Integer statusId,
+                               @RequestParam Integer userId,
+                               @RequestParam MultipartFile file) throws IOException {
+        Status status = statusRepository.findById(statusId).get();
+        User user = userRepository.findById(userId).get();
+        Attachment attachment = Attachment.builder()
+                .name(file.getOriginalFilename())
+                .content(file.getBytes())
+                .build();
+        attachmentRepository.save(attachment);
+
+        task.setStatus(status);
+        task.setUser(user);
+        task.setAttachment(attachment);
+
+        taskRepository.save(task);
+        return "redirect:/";
+    }
 }

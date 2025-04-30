@@ -16,8 +16,8 @@ import org.example.entity.abs.BaseEntity;
 public class Status extends BaseEntity {
     @Column(unique = true,nullable = false)
     private String name;
-    private Boolean isActive;
-    @Column(unique = true ,nullable = false)
+    private Boolean isActive=true;
+    @Column(unique = true )
     private Integer positionNumber;
 
 }

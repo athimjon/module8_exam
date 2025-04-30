@@ -13,11 +13,12 @@ import java.util.Optional;
 
 @RequestMapping("/attachment")
 @Controller
-public class Attachment {
+public class AttachmentController {
+
 
     private final AttachmentRepository attachmentRepository;
 
-    public Attachment(AttachmentRepository attachmentRepository) {
+    public AttachmentController(AttachmentRepository attachmentRepository) {
         this.attachmentRepository = attachmentRepository;
     }
 

@@ -3,6 +3,7 @@ package org.example.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -19,7 +20,7 @@ public class SecurityConfig {
             registry
                     .requestMatchers("/images/**").permitAll();
             registry
-                    .requestMatchers( "/login", "/register").permitAll();
+                    .requestMatchers( "/login", "/register","/register/send/email","/register/verify").permitAll();
             registry
                     .anyRequest().authenticated();
         });
@@ -38,7 +39,7 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 
 }

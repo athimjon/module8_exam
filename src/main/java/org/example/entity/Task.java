@@ -19,6 +19,7 @@ import java.util.List;
 public class Task extends BaseEntity {
 
     private String title;
+    private String description;
     @ManyToOne
     private Status status;
     @ManyToOne
