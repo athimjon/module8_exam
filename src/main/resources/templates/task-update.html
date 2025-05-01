@@ -263,6 +263,18 @@
           <input type="file" class="form-control" id="file" name="file">
         </div>
         <div class="mb-4">
+          <label for="user" class="form-label fw-bold">Assign To</label>
+          <select class="form-select" id="user" name="userId" required>
+            <option value="" disabled>Select a user</option>
+            <option th:each="user : ${allUsers}"
+                    th:value="${user.id}"
+                    th:text="${user.getFullName()}"
+                    th:selected="${task.user != null and user.id == task.user.id}">
+            </option>
+          </select>
+        </div>
+
+        <div class="mb-4">
           <label for="title" class="form-label">Task Title</label>
           <input type="text" class="form-control" id="title" th:value="${task.title}" name="title" required>
         </div>

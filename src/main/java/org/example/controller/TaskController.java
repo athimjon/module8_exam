@@ -73,6 +73,8 @@ public class TaskController {
 
     @GetMapping("/update/{taskId}")
     public String getUpdateTaskPage(@PathVariable Integer taskId, Model model) {
+        List<User> allUsers = userRepository.findAll();
+        model.addAttribute("allUsers", allUsers);
         model.addAttribute("task", taskRepository.findById(taskId).get());
         return "task-update";
     }
@@ -81,8 +83,10 @@ public class TaskController {
     @PostMapping("/update")
     public String updateTaskPage(@RequestParam MultipartFile file,
                                  @RequestParam Integer taskId,
+                                 @RequestParam Integer userId,
                                  @RequestParam String title) throws IOException {
         Task task = taskRepository.findById(taskId).get();
+        User user = userRepository.findById(userId).get();
         if (!file.isEmpty()) {
             Attachment attachment = attachmentRepository.save(Attachment.builder()
                     .name(file.getOriginalFilename())
@@ -91,6 +95,7 @@ public class TaskController {
             attachmentRepository.save(attachment);
             task.setAttachment(attachment);
         }
+            task.setUser(user);
         task.setTitle(title);
         taskRepository.save(task);
         return "redirect:/";
