@@ -1,20 +1,17 @@
 package org.example.controller;
 
+import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
-import org.example.entity.Attachment;
-import org.example.entity.Status;
-import org.example.entity.Task;
-import org.example.entity.User;
-import org.example.repo.AttachmentRepository;
-import org.example.repo.StatusRepository;
-import org.example.repo.TaskRepository;
-import org.example.repo.UserRepository;
+import org.example.entity.*;
+import org.example.repo.*;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,12 +22,15 @@ public class TaskController {
     private final AttachmentRepository attachmentRepository;
     private final StatusRepository statusRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
 
-    public TaskController(TaskRepository taskRepository, AttachmentRepository attachmentRepository, StatusRepository statusRepository, UserRepository userRepository) {
+    public TaskController(TaskRepository taskRepository, AttachmentRepository attachmentRepository, StatusRepository statusRepository, UserRepository userRepository,
+                          CommentRepository commentRepository) {
         this.taskRepository = taskRepository;
         this.attachmentRepository = attachmentRepository;
         this.statusRepository = statusRepository;
         this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
 
     @PostMapping("/create")
@@ -55,7 +55,7 @@ public class TaskController {
     }
 
     @PostMapping("/update/right")
-    public String changeTaskStatusToRight(@RequestParam   Integer taskId){
+    public String changeTaskStatusToRight(@RequestParam Integer taskId) {
         Task task = taskRepository.findById(taskId).get();
         Integer posNumber = task.getStatus().getPositionNumber();
         List<Status> statuses = statusRepository.getStatusRight(posNumber);
@@ -63,8 +63,9 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/";
     }
+
     @PostMapping("/update/left")
-    public String changeTaskStatusToLeft(@RequestParam   Integer taskId){
+    public String changeTaskStatusToLeft(@RequestParam Integer taskId) {
         Task task = taskRepository.findById(taskId).get();
         Integer posNumber = task.getStatus().getPositionNumber();
         List<Status> statuses = statusRepository.getStatusLeft(posNumber);
@@ -73,10 +74,5 @@ public class TaskController {
         return "redirect:/";
     }
 
-    @GetMapping("/update")
-     public String updateTaskPage(@RequestParam Integer taskId, Model model) {
-        model.addAttribute("task", taskRepository.findById(taskId).get());
-        return "task-update";
-    }
 
 }
