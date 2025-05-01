@@ -18,7 +18,6 @@ public class Runner implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//        Path path = Path.of("C:\\Users\\ASUS\\OneDrive\\Desktop\\pdp\\module_8\\exam\\file\\img.png");
 //
 //        byte[] fileContent = Files.readAllBytes(path);
 //
