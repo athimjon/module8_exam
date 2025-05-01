@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,8 +23,7 @@ public class TaskController {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
-    public TaskController(TaskRepository taskRepository, AttachmentRepository attachmentRepository, StatusRepository statusRepository, UserRepository userRepository,
-                          CommentRepository commentRepository) {
+    public TaskController(TaskRepository taskRepository, AttachmentRepository attachmentRepository, StatusRepository statusRepository, UserRepository userRepository, CommentRepository commentRepository) {
         this.taskRepository = taskRepository;
         this.attachmentRepository = attachmentRepository;
         this.statusRepository = statusRepository;
@@ -55,7 +53,7 @@ public class TaskController {
     }
 
     @PostMapping("/update/right")
-    public String changeTaskStatusToRight(@RequestParam Integer taskId) {
+    public String changeTaskStatusToRight(@RequestParam   Integer taskId){
         Task task = taskRepository.findById(taskId).get();
         Integer posNumber = task.getStatus().getPositionNumber();
         List<Status> statuses = statusRepository.getStatusRight(posNumber);
@@ -63,9 +61,8 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/";
     }
-
     @PostMapping("/update/left")
-    public String changeTaskStatusToLeft(@RequestParam Integer taskId) {
+    public String changeTaskStatusToLeft(@RequestParam   Integer taskId){
         Task task = taskRepository.findById(taskId).get();
         Integer posNumber = task.getStatus().getPositionNumber();
         List<Status> statuses = statusRepository.getStatusLeft(posNumber);
@@ -74,5 +71,44 @@ public class TaskController {
         return "redirect:/";
     }
 
+    @GetMapping("/update/{taskId}")
+    public String getUpdateTaskPage(@PathVariable Integer taskId, Model model) {
+        model.addAttribute("task", taskRepository.findById(taskId).get());
+        return "task-update";
+    }
+
+    @Transactional
+    @PostMapping("/update")
+    public String updateTaskPage(@RequestParam MultipartFile file,
+                                 @RequestParam Integer taskId,
+                                 @RequestParam String title) throws IOException {
+        Task task = taskRepository.findById(taskId).get();
+        if (!file.isEmpty()) {
+            Attachment attachment = attachmentRepository.save(Attachment.builder()
+                    .name(file.getOriginalFilename())
+                    .content(file.getBytes())
+                    .build());
+            attachmentRepository.save(attachment);
+            task.setAttachment(attachment);
+        }
+        task.setTitle(title);
+        taskRepository.save(task);
+        return "redirect:/";
+    }
+
+    @Transactional
+    @PostMapping("/add/comment")
+    public String addTaskComment(@RequestParam Integer taskId,
+                                 @RequestParam String comment) throws IOException {
+        User commentator = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Task task = taskRepository.findById(taskId).get();
+        Comment saved = Comment.builder()
+                .user(commentator)
+                .comment(comment)
+                .build();
+        commentRepository.save(saved);
+        task.getComments().add(saved);
+        return "redirect:/task/update/" + task.getId();
+    }
 
 }
