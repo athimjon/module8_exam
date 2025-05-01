@@ -37,10 +37,19 @@ public class PageController {
     @GetMapping("/")
     public String getTaskHomePage(Model model) {
         List<Task> tasks = taskRepository.findAll();
-        List<Status> statuses = statusRepository.findByIsActiveTrue();
-        long limit = statusRepository.count();
+        List<Status> statuses = statusRepository.findByIsActiveTrueOrderByPositionNumberAsc();
+        Integer min = statuses.stream()
+                .map(Status::getPositionNumber)
+                .min(Integer::compareTo)
+                .orElse(null);
+
+        Integer max = statuses.stream()
+                .map(Status::getPositionNumber)
+                .max(Integer::compareTo)
+                .orElse(null);
         model.addAttribute("tasks", tasks);
-        model.addAttribute("limit", limit);
+        model.addAttribute("max", max);
+        model.addAttribute("min", min);
         model.addAttribute("statuses", statuses);
         return "task-home-page";
     }
