@@ -264,8 +264,7 @@
                         </div>
 
                         <div class="task-actions">
-                            <form action="/task/update">
-                                <input type="hidden" name="taskId" th:value="${task.id}">
+                            <form th:action="'/task/update/' + ${task.id}">
                                 <button class="btn btn-edit">
                                     <i class="fas fa-pencil-alt"></i> Edit
                                 </button>

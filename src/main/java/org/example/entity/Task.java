@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.example.entity.abs.BaseEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
@@ -27,6 +28,6 @@ public class Task extends BaseEntity {
     @ManyToOne
     private User user;
     @OneToMany
-    private List<Comment> comments;
+    private List<Comment> comments=new ArrayList<>();
 
 }
