@@ -95,7 +95,7 @@ public class TaskController {
             attachmentRepository.save(attachment);
             task.setAttachment(attachment);
         }
-            task.setUser(user);
+        task.setUser(user);
         task.setTitle(title);
         taskRepository.save(task);
         return "redirect:/";
