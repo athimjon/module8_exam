@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.SneakyThrows;
 import org.example.entity.Attachment;
+import org.example.entity.Role;
 import org.example.entity.User;
 import org.example.repo.AttachmentRepository;
+import org.example.repo.RoleRepository;
 import org.example.repo.UserRepository;
 import org.example.service.EmailService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.PublicKey;
+import java.util.List;
 import java.util.Random;
 
 @Controller
@@ -25,12 +28,14 @@ public class RegisterController {
     private final EmailService emailService;
     private final UserRepository userRepository;
     private final AttachmentRepository attachmentRepository;
+    private final RoleRepository roleRepository;
 
-    public RegisterController(PasswordEncoder passwordEncoder, EmailService emailService, UserRepository userRepository, AttachmentRepository attachmentRepository) {
+    public RegisterController(PasswordEncoder passwordEncoder, EmailService emailService, UserRepository userRepository, AttachmentRepository attachmentRepository, RoleRepository roleRepository) {
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.userRepository = userRepository;
         this.attachmentRepository = attachmentRepository;
+        this.roleRepository = roleRepository;
     }
 
     @SneakyThrows
@@ -45,7 +50,8 @@ public class RegisterController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAttachment(attachment);
-
+        Role role = roleRepository.findById(1).get();
+        user.setRoles(List.of(role));
         request.getSession().setAttribute("tempUser", user);
         return "redirect:/register/send/email";
     }

@@ -61,15 +61,22 @@
     <!-- Profile Card Row -->
     <div class="d-flex justify-content-end mb-4">
         <div class="profile-card d-flex align-items-center">
-            <img th:src="|/attachment/view/|+${#authentication.principal.attachment.id}" alt="Profile Image" class="profile-image">
+            <img th:src="|/attachment/view/|+${#authentication.principal.#authentication.principal.attachment.id}" alt="Profile Image" class="profile-image">
             <div class="profile-info">
                 <h6 class="mb-0" th:text="${#authentication.principal.getFullName()}">User Name</h6>
                 <p class="mb-1" th:text="${#authentication.principal.email}">user@example.com</p>
+
                 <div class="d-flex flex-wrap">
                     <span class="profile-role-badge"
                           th:each="role : ${#authentication.principal.roles}"
                           th:text="${role.roleName.userRoleName}">ROLE_USER</span>
                 </div>
+                <form th:action="@{/logout}" method="post">
+                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-sign-out-alt me-1"></i> Logout
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -118,6 +125,7 @@
                                 </div>
                             </td>
                             <td class="action-buttons">
+
                                 <button type="button"
                                         class="btn btn-danger btn-sm"
                                         data-bs-toggle="modal"

@@ -4,6 +4,7 @@ package org.example.controller;
 import jakarta.transaction.Transactional;
 import org.example.entity.Status;
 import org.example.repo.StatusRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -20,13 +21,14 @@ public class StatusController {
         this.statusRepository = statusRepository;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER')")
     @PostMapping("/create")
     public String createStatus(@ModelAttribute Status status) {
         status.setName(status.getName().toUpperCase());
         statusRepository.save(status);
         return "redirect:/";
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER')")
     @GetMapping("/update")
     public String getStatusUpdatePage(Model model) {
         List<Status> statuses = statusRepository.findAllByOrderByPositionNumberAsc();
@@ -39,7 +41,7 @@ public class StatusController {
         return "update-status-order";
 
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER')")
     @Transactional
     @PostMapping("/update")
     public String updateStatusPositionOrder(

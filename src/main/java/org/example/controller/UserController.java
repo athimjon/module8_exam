@@ -5,12 +5,9 @@ import jakarta.transaction.Transactional;
 import org.example.dto.UserProfileDTO;
 import org.example.dto.UserRoleForm;
 import org.example.dto.UserRolesForm;
-import org.example.entity.Attachment;
-import org.example.entity.Role;
-import org.example.entity.User;
-import org.example.repo.AttachmentRepository;
-import org.example.repo.RoleRepository;
-import org.example.repo.UserRepository;
+import org.example.entity.*;
+import org.example.repo.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,20 +27,27 @@ public class UserController {
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final AttachmentRepository attachmentRepository;
+    private final TaskRepository taskRepository;
+    private final CommentRepository commentRepository;
 
-    public UserController(UserRepository userRepository, RoleRepository roleRepository, AttachmentRepository attachmentRepository) {
+    public UserController(UserRepository userRepository, RoleRepository roleRepository, AttachmentRepository attachmentRepository, TaskRepository taskRepository, CommentRepository commentRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.attachmentRepository = attachmentRepository;
+        this.taskRepository = taskRepository;
+        this.commentRepository = commentRepository;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping()
     public String usersPage(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        model.addAttribute("users", userRepository.findUsersThatDoesNotHaveId(user.getId()));
         model.addAttribute("roles", roleRepository.findAll());
         return "user-management";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @Transactional
     @PostMapping("/update/roles")
     public String updateUserRoles(@ModelAttribute UserRolesForm userRolesForm) {
@@ -60,14 +64,38 @@ public class UserController {
         return "redirect:/";
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+    @Transactional
     @PostMapping("/delete/{userId}")
     public String deleteUser(@PathVariable Integer userId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        List<Task> userTasks = taskRepository.findAllByUserId(userId);
+        taskRepository.deleteAll(userTasks);
+
+        List<Comment> userComments = commentRepository.findAllByUserId(userId);
+        commentRepository.deleteAll(userComments);
+
+        Attachment userAttachment = user.getAttachment();
+        if (userAttachment != null) {
+            boolean isAttachmentUsedElsewhere = userRepository.existsByAttachment(userAttachment)
+                                                || taskRepository.existsByAttachment(userAttachment);
+            if (!isAttachmentUsedElsewhere) {
+                attachmentRepository.delete(userAttachment);
+            }
+        }
+
+        user.getRoles().clear();
+
+        userRepository.save(user);
+
+        userRepository.deleteById(userId);
+
         System.out.println("❌❌❌ " + userId);
 //        userRepository.deleteById(userId);
-        return "redirect:/users";
+        return "redirect:/user";
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER','ROLE_PROGRAMMER')")
     @GetMapping("/profile/settings")
     public String getUserProfileSettingsPage(Model model) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -76,6 +104,7 @@ public class UserController {
         return "user-profile";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER','ROLE_PROGRAMMER')")
     @Transactional
     @PostMapping("/profile/update")
     public String updateProfileImage(@ModelAttribute UserProfileDTO userProfileDTO,

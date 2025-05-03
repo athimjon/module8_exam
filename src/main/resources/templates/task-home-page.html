@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -433,14 +433,14 @@
                 </div>
 
                 <div class="nav-buttons">
-                    <a href="/user" class="btn btn-dark">User Management</a>
-                    <a href="/task" class="btn btn-accent me-2">
+                    <a sec:authorize="hasAnyRole('ROLE_ADMIN')"  href="/user" class="btn btn-dark">User Management</a>
+                    <a sec:authorize="hasAnyRole('ROLE_MAINTAINER', 'ROLE_ADMIN')"  href="/task" class="btn btn-accent me-2">
                         <i class="fas fa-plus me-1"></i> Create Task
                     </a>
-                    <a href="/status/update" class="btn btn-warning">
+                    <a sec:authorize="hasAnyRole('ROLE_MAINTAINER', 'ROLE_ADMIN')"  href="/status/update" class="btn btn-warning">
                         Manage Status order
                     </a>
-                    <a href="/status" class="btn btn-primary-custom">
+                    <a href="/status"  sec:authorize="hasAnyRole('ROLE_MAINTAINER', 'ROLE_ADMIN')"  class="btn btn-primary-custom">
                         <i class="fas fa-columns me-1 "></i> Add Status
                     </a>
                 </div>

@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.example.entity.*;
 import org.example.repo.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +32,7 @@ public class TaskController {
         this.commentRepository = commentRepository;
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER')")
     @PostMapping("/create")
     public String createStatus(@ModelAttribute Task task,
                                @RequestParam Integer statusId,
@@ -52,6 +54,7 @@ public class TaskController {
         return "redirect:/";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER','ROLE_PROGRAMMER')")
     @PostMapping("/update/right")
     public String changeTaskStatusToRight(@RequestParam   Integer taskId){
         Task task = taskRepository.findById(taskId).get();
@@ -61,6 +64,8 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/";
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER','ROLE_PROGRAMMER')")
     @PostMapping("/update/left")
     public String changeTaskStatusToLeft(@RequestParam   Integer taskId){
         Task task = taskRepository.findById(taskId).get();
@@ -70,7 +75,7 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/";
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER','ROLE_PROGRAMMER')")
     @GetMapping("/update/{taskId}")
     public String getUpdateTaskPage(@PathVariable Integer taskId, Model model) {
         List<User> allUsers = userRepository.findAll();
@@ -79,6 +84,7 @@ public class TaskController {
         return "task-update";
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER')")
     @Transactional
     @PostMapping("/update")
     public String updateTaskPage(@RequestParam MultipartFile file,
@@ -100,7 +106,7 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/";
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER','ROLE_PROGRAMMER')")
     @Transactional
     @PostMapping("/add/comment")
     public String addTaskComment(@RequestParam Integer taskId,

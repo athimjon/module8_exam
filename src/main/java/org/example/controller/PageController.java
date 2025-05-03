@@ -1,24 +1,18 @@
 package org.example.controller;
 
-import org.example.entity.Role;
 import org.example.entity.Status;
 import org.example.entity.Task;
 import org.example.entity.User;
-import org.example.entity.enums.Roles;
 import org.example.repo.RoleRepository;
 import org.example.repo.StatusRepository;
 import org.example.repo.TaskRepository;
 import org.example.repo.UserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 public class PageController {
@@ -33,7 +27,7 @@ public class PageController {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
     }
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER','ROLE_PROGRAMMER')")
     @GetMapping("/")
     public String getTaskHomePage(Model model) {
         List<Task> tasks = taskRepository.findAll();
@@ -59,11 +53,13 @@ public class PageController {
         return "auth/login";
     }
 
-
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER')")
     @GetMapping("/status")
     public String getCreateStatusPage() {
         return "create-status";
     }
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_MAINTAINER')")
     @GetMapping("/task")
     public String getCreateTaskPage(Model model) {
         List<User> users = userRepository.findAll();
