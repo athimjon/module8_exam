@@ -2,7 +2,6 @@
 package org.example.controller;
 
 import jakarta.transaction.Transactional;
-import org.example.dto.StatusDTO;
 import org.example.entity.Status;
 import org.example.repo.StatusRepository;
 import org.springframework.stereotype.Controller;
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @RequestMapping("/status")
 @Controller
