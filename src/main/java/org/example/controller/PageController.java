@@ -72,32 +72,8 @@ public class PageController {
         model.addAttribute("users",users);
         return "create-task";
     }
-    @GetMapping("/change-role")
-    public String userPage(Model model) {
-        List<User> allUsers = userRepository.findAll();
-        List<Role> allRoles = roleRepository.findAll();
-        model.addAttribute("users",allUsers);
-        model.addAttribute("roles",allRoles);
-        return "update-user-role";
-    }
-    @PostMapping("/users/changeRole")
-    public String changeUserRole(@RequestParam  Integer userId,
-                                 @RequestParam("roleNames") List<String> roleNames) {
-        Optional<User> optionalUser = userRepository.findById(userId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
 
-            List<Roles> enumRoles = roleNames.stream()
-                    .map(Roles::valueOf)
-                    .toList();
 
-            List<Role> newRoles = roleRepository.findAllByRoleNameIn(enumRoles);
-
-            user.setRoles(newRoles);
-            userRepository.save(user);
-        }
-        return "redirect:/";
-    }
 
     @GetMapping("/register")
     public String getRegisterPage(){
